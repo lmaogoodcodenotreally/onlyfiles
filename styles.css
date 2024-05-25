@@ -1,0 +1,44 @@
+body {
+    font-family: Arial, sans-serif;
+}
+
+#file-table {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+th, td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+
+th {
+    background-color: #f0f0f0;
+    cursor: pointer;
+}
+
+th:hover {
+    background-color: #ccc;
+}
+
+#search-input {
+    width: 200px;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+}
+
+#search-btn {
+    padding: 10px 20px;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    background-color: #4CAF50;
+    color: #fff;
+    cursor: pointer;
+}
+
+#search-btn:hover {
+    background-color: #3e8e41;
+}

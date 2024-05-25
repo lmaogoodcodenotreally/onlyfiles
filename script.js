@@ -3,20 +3,28 @@ const fileTable = document.getElementById('file-table');
 const fileList = document.getElementById('file-list');
 const searchInput = document.getElementById('search-input');
 const searchBtn = document.getElementById('search-btn');
+const currentPageSpan = document.getElementById('current-page');
+const totalPagesSpan = document.getElementById('total-pages');
 
 let files = [];
 let sortedBy = 'name';
 let sortOrder = 'asc';
+let currentPage = 1;
 
-fetch(DB_URL)
-    .then(response => response.text())
-    .then(data => {
-        files = data.split('\n').map(line => {
-            const [filename, size, link] = line.split(' - ');
-            return { filename, size, link };
+function fetchData() {
+    fetch(DB_URL)
+        .then(response => response.text())
+        .then(data => {
+            files = data.split('\n').map(line => {
+                const [filename, size, link] = line.split(' - ');
+                return { filename, size, link };
+            });
+            renderFiles();
+            updatePageInfo();
         });
-        renderFiles();
-    });
+}
+
+fetchData();
 
 searchBtn.addEventListener('click', searchFiles);
 
@@ -30,11 +38,14 @@ fileTable.addEventListener('click', e => {
         }
         sortOrder = sortOrder === 'asc' ? 'desc' : 'asc';
         renderFiles();
+        updatePageInfo();
     }
 });
 
 function renderFiles() {
     fileList.innerHTML = '';
+    const start = (currentPage - 1) * 100;
+    const end = start + 100;
     files.sort((a, b) => {
         if (sortedBy === 'name') {
             if (sortOrder === 'asc') {
@@ -49,7 +60,7 @@ function renderFiles() {
                 return parseInt(b.size.replace(' MB', '')) - parseInt(a.size.replace(' MB', ''));
             }
         }
-    }).forEach(file => {
+    }).slice(start, end).forEach(file => {
         const row = document.createElement('tr');
         row.innerHTML = `
             <td>${file.filename}</td>
@@ -64,4 +75,11 @@ function searchFiles() {
     const searchTerm = searchInput.value.trim().toLowerCase();
     files = files.filter(file => file.filename.toLowerCase().includes(searchTerm));
     renderFiles();
+    updatePageInfo();
+}
+
+function updatePageInfo() {
+    currentPage = Math.ceil(files.length / 100);
+    totalPagesSpan.textContent = `/ ${currentPage}`;
+    currentPageSpan.textContent = currentPage;
 }

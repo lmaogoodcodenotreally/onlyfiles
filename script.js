@@ -10,10 +10,11 @@ let files = [];
 let sortedBy = 'name';
 let sortOrder = 'asc';
 let currentPage = 1;
+const proxyUrl = 'https://cors-anywhere.herokuapp.com/';
 
 function fetchData() {
     const xhr = new XMLHttpRequest();
-    xhr.open('GET', DB_URL, true);
+    xhr.open('GET', proxyUrl + DB_URL, true);
     xhr.onload = function () {
         if (xhr.status === 200) {
             files = xhr.responseText.split('\n').filter(line => line.trim() !== '').map(line => {

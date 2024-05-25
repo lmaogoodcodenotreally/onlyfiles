@@ -11,20 +11,16 @@ let sortedBy = 'name';
 let sortOrder = 'asc';
 let currentPage = 1;
 
-function fetchData() {
-    fetch(DB_URL)
-        .then(response => response.text())
-        .then(data => {
-            files = data.split('\n').map(line => {
-                const [filename, size, link] = line.split(' - ');
-                return { filename, size, link };
-            });
-            renderFiles();
-            updatePageInfo();
+fetch(DB_URL)
+    .then(response => response.text())
+    .then(data => {
+        files = data.split('\n').filter(line => line.trim() !== '').map(line => {
+            const [filename, size, link] = line.split(' - ');
+            return { filename, size, link: link.trim() };
         });
-}
-
-fetchData();
+        renderFiles();
+        updatePageInfo();
+    });
 
 searchBtn.addEventListener('click', searchFiles);
 
@@ -79,7 +75,7 @@ function searchFiles() {
 }
 
 function updatePageInfo() {
-    currentPage = Math.ceil(files.length / 100);
-    totalPagesSpan.textContent = `/ ${currentPage}`;
+    const totalPages = Math.ceil(files.length / 100);
+    totalPagesSpan.textContent = `/ ${totalPages}`;
     currentPageSpan.textContent = currentPage;
 }

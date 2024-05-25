@@ -11,16 +11,28 @@ let sortedBy = 'name';
 let sortOrder = 'asc';
 let currentPage = 1;
 
-fetch(DB_URL)
-    .then(response => response.text())
-    .then(data => {
-        files = data.split('\n').filter(line => line.trim() !== '').map(line => {
-            const [filename, size, link] = line.split(' - ');
-            return { filename, size, link: link.trim() };
-        });
-        renderFiles();
-        updatePageInfo();
-    });
+function fetchData() {
+    const xhr = new XMLHttpRequest();
+    xhr.open('GET', DB_URL, true);
+    xhr.onload = function () {
+        if (xhr.status === 200) {
+            files = xhr.responseText.split('\n').filter(line => line.trim() !== '').map(line => {
+                const [filename, size, link] = line.split(' - ');
+                return { filename, size, link: link.trim() };
+            });
+            renderFiles();
+            updatePageInfo();
+        } else {
+            console.error('Error fetching data:', xhr.statusText);
+        }
+    };
+    xhr.onerror = function () {
+        console.error('Error fetching data');
+    };
+    xhr.send();
+}
+
+fetchData();
 
 searchBtn.addEventListener('click', searchFiles);
 
